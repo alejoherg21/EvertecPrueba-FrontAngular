@@ -1,0 +1,136 @@
+  <div class="container">
+    <div *ngIf="!editar && !crear" class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Fecha nacimiento</th>
+            <th>Estado Civil</th>
+            <th>Tiene Hermanos</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let persona of personas">
+            <td>{{persona.personaId}}</td>
+            <td>{{persona.nombre}}</td>
+            <td>{{persona.apellido}}</td>
+            <td>{{persona.fechaNacimiento}}</td>
+            <td><label *ngIf="persona.estadoCivil=='1'">Casado</label><label *ngIf="persona.estadoCivil=='0'">Soltero</label></td>
+            <td><label *ngIf="persona.tieneHermanos">Si</label><label *ngIf="!persona.tieneHermanos">No</label></td>
+            <td>
+              <button class="btn btn-primary btn-sm" style="padding-left: 2.5rem; padding-right: 2.5rem;" 
+                (click)="UpdatePersonas(persona.personaId, persona.nombre, persona.apellido, persona.fechaNacimiento, persona.estadoCivil,persona.tieneHermanos)">Editar
+              </button>
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm" style="padding-left: 2.5rem; padding-right: 2.5rem;" 
+                (click)="DeletePersona(persona.personaId)">Eliminar
+              </button>
+            </td>
+        </tr>
+        </tbody>
+      </table>
+      <button *ngIf="!crear" class="btn btn-primary btn-sm" style="padding-left: 2.5rem; padding-right: 2.5rem;" 
+        (click)="CreatePersona()">Crear
+      </button>
+    </div>
+    <div *ngIf="editar || crear" class="mt-n1" style="margin-top: 50px;">
+        <form [formGroup]="form" (ngSubmit)="SavePersona()" class="text-center">
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Código</span>
+                    <input mdbInput type="text" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
+                    formControlName="personaId" name="personaId" id="personaId" value="{{personaId}}" class="form-control" readonly/>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Nombre</span>
+                    <input mdbInput type="text" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
+                    formControlName="nombre" id="nombre" value="{{nombre}}" class="form-control"/>
+                  </div>
+
+                  <div *ngIf="f['nombre'].touched && f['nombre'].invalid" class="alert alert-danger">
+                    El nombre debe ser de máximo 10 letras y mínimo 4
+                  </div>
+
+                </div>
+                <div class="col-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Apellido</span>
+                    <input mdbInput type="text" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" 
+                    formControlName="apellido" value="{{apellido}}" class="form-control"/>
+                  </div>
+
+                  <div *ngIf="f['apellido'].touched && f['apellido'].invalid" class="alert alert-danger">
+                    El apellido debe ser de máximo 10 letras y mínimo 4
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Estado civil</span>
+                    <select class="form-select" aria-label="Default select example" formControlName="estadoCivil">
+                      <option *ngFor="let suit of EstadoCivil" [selected]="estadoCivil" [value]="suit.value">{{suit.viewValue}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Tiene Hermanos</span>
+                    <select class="form-select" aria-label="Default select example" formControlName="tieneHermanos">
+                      <option *ngFor="let suit of Hermanos" [selected]="!tieneHermanos" [value]="suit.value">{{suit.viewValue}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-8">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Fecha Nacimiento</span>
+                    <ngb-datepicker #d formControlName="fechaNacimiento"></ngb-datepicker>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <button type="submit" class="btn btn-primary btn-sm" style="padding-left: 2.5rem; padding-right: 2.5rem;">Guardar</button>
+                   <!-- mensaje de error -->
+                  <div class="alert alert-danger" *ngIf="errorStatus">
+                    <p class="text-center">{{ errorMsj}}</p>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div *ngIf="!crear" class="row">
+                <div class="col-6">
+                  <label class="btn btn-default p-0">
+                    <input type="file" accept="image/*" (change)="selectFile($event)" />
+                  </label>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-success btn-sm float-right" [disabled]="!selectedFiles" (click)="sendImage(personaId)">Cargar imagen</button>
+                </div>
+              </div>
+              <img *ngIf=dbImage [src]="dbImage" class="img-fluid img-thumbnail" style="height: 300px">      
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-8">
+            <button class="btn btn-primary btn-sm" style="padding-left: 2.5rem; padding-right: 2.5rem;" (click)="volver()">Volver</button>
+          </div>
+        </div>
+
+    </div>
+</div>
