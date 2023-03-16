@@ -63,7 +63,6 @@ export class PersonasComponent implements OnInit {
       tieneHermanos: ['', []],
     })
       console.log('hola')
-    console.log('hola a todos')
   }
   get f(){
     return this.form.controls;
