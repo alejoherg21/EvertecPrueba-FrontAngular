@@ -62,7 +62,7 @@ export class PersonasComponent implements OnInit {
       estadoCivil: ['', []],
       tieneHermanos: ['', []],
     })
-      console.log('hola mundo')
+      console.log('hola mundo feliz')
   }
   get f(){
     return this.form.controls;
